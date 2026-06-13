@@ -342,12 +342,31 @@ inputCodigo.addEventListener('keypress', (e) => {
 async function iniciarScanner() {
     try {
         html5QrCode = new Html5Qrcode("reader");
-        await html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 },
-            onScanSuccess,
-            () => {}
-        );
+        
+        try {
+            // Tenta iniciar com a câmera traseira
+            await html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 },
+                onScanSuccess,
+                () => {}
+            );
+        } catch (backErr) {
+            console.warn("Falha ao abrir câmera traseira, tentando câmeras disponíveis:", backErr);
+            // Fallback: lista as câmeras e abre a primeira disponível
+            const devices = await Html5Qrcode.getCameras();
+            if (devices && devices.length > 0) {
+                await html5QrCode.start(
+                    devices[0].id,
+                    { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 },
+                    onScanSuccess,
+                    () => {}
+                );
+            } else {
+                throw new Error("Nenhuma câmera encontrada no dispositivo.");
+            }
+        }
+
         isScanning = true;
         btnIniciar.classList.add('hidden');
         btnParar.classList.remove('hidden');
