@@ -1,0 +1,10 @@
+{
+  "name": "ned2026",
+  "version": "1.0.0",
+  "description": "NED 2026 - Sistema de Controle de Evento com QR Code",
+  "private": true,
+
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  }
+}
