@@ -372,7 +372,12 @@ async function iniciarScanner() {
         btnParar.classList.remove('hidden');
     } catch (err) {
         console.error('Erro ao iniciar câmera:', err);
-        showToast('Erro ao acessar câmera. Verifique as permissões.', 'error');
+        const errMsg = err.toString().toLowerCase();
+        if (err.name === 'NotAllowedError' || errMsg.includes('permission denied') || errMsg.includes('notallowed')) {
+            mostrarInstrucoesCamera();
+        } else {
+            showToast('Erro ao acessar câmera. Verifique as permissões.', 'error');
+        }
     }
 }
 
@@ -615,3 +620,26 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('modal-overlay').classList.add('hidden');
     }
 });
+
+function mostrarInstrucoesCamera() {
+    const reader = document.getElementById('reader');
+    reader.innerHTML = `
+        <div class="camera-instruction-card" style="padding: 20px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; text-align: left; color: #f0f0f5; font-size: 0.85rem; max-width: 100%; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 8px; color: #ef4444; font-weight: bold; font-size: 1rem; margin-bottom: 10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Câmera Bloqueada</span>
+            </div>
+            <p style="margin-bottom: 12px; color: rgba(240, 240, 245, 0.7); line-height: 1.4;">Para escanear o QR Code, siga estes passos simples para reativar o acesso:</p>
+            <ol style="margin-bottom: 16px; padding-left: 20px; color: rgba(240, 240, 245, 0.7); display: flex; flex-direction: column; gap: 8px; line-height: 1.4;">
+                <li>No topo da tela, toque no <strong>ícone de configurações ou cadeado 🔒</strong> à esquerda da URL (<code>${window.location.hostname}</code>).</li>
+                <li>Ative a permissão de <strong>Câmera</strong> (ou vá em <em>Permissões > Permitir</em>).</li>
+                <li>Toque no botão abaixo para recarregar a página e tentar novamente.</li>
+            </ol>
+            <button class="btn-primary" onclick="window.location.reload()" style="width: 100%; justify-content: center; padding: 10px 14px;">Recarregar Página</button>
+        </div>
+    `;
+}
