@@ -53,7 +53,7 @@ O sistema estará rodando em `http://localhost:3000`, processando requisições 
    git add .
    git commit -m "Migração para Vercel e Supabase"
    git branch -M main
-   git remote add origin https://github.com/seu-usuario/ned2026.git
+   git remote add origin https://github.com/mfurmigabtc-sudo/ned2026.git
    git push -u origin main
    ```
 
